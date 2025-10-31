@@ -1,0 +1,472 @@
+:root {
+    /* Light theme (default) */
+    --bg-primary: #f5f5f5;
+    --bg-secondary: #ffffff;
+    --bg-tertiary: #f8f9fa;
+    --bg-quaternary: #fafafa;
+    --text-primary: #333333;
+    --text-secondary: #ffffff;
+    --text-muted: #666666;
+    --border-color: #dddddd;
+    --shadow-color: rgba(0,0,0,0.1);
+    --topbar-bg: #2c3e50;
+    --btn-primary: #3498db;
+    --btn-primary-hover: #2980b9;
+    --btn-secondary: #95a5a6;
+    --btn-secondary-hover: #7f8c8d;
+    --btn-success: #27ae60;
+    --btn-success-hover: #229954;
+    --progress-bg: #ecf0f1;
+    --progress-fill: #3498db;
+    --log-info-bg: #d4edda;
+    --log-info-text: #155724;
+    --log-info-border: #c3e6cb;
+    --log-success-bg: #d1ecf1;
+    --log-success-text: #0c5460;
+    --log-success-border: #bee5eb;
+    --log-error-bg: #f8d7da;
+    --log-error-text: #721c24;
+    --log-error-border: #f5c6cb;
+    --log-warning-bg: #fff3cd;
+    --log-warning-text: #856404;
+    --log-warning-border: #ffeaa7;
+    --test-section-border: #3498db;
+}
+
+[data-theme="dark"] {
+    /* Dark theme */
+    --bg-primary: #1a1a1a;
+    --bg-secondary: #2d2d2d;
+    --bg-tertiary: #333333;
+    --bg-quaternary: #262626;
+    --text-primary: #e0e0e0;
+    --text-secondary: #ffffff;
+    --text-muted: #b0b0b0;
+    --border-color: #404040;
+    --shadow-color: rgba(0,0,0,0.3);
+    --topbar-bg: #1e3a5f;
+    --btn-primary: #4a90e2;
+    --btn-primary-hover: #357abd;
+    --btn-secondary: #6c757d;
+    --btn-secondary-hover: #5a6268;
+    --btn-success: #28a745;
+    --btn-success-hover: #218838;
+    --progress-bg: #404040;
+    --progress-fill: #4a90e2;
+    --log-info-bg: #2d5a2d;
+    --log-info-text: #90d490;
+    --log-info-border: #4a7a4a;
+    --log-success-bg: #2d5a5a;
+    --log-success-text: #90d4d4;
+    --log-success-border: #4a7a7a;
+    --log-error-bg: #5a2d2d;
+    --log-error-text: #d49090;
+    --log-error-border: #7a4a4a;
+    --log-warning-bg: #5a5a2d;
+    --log-warning-text: #d4d490;
+    --log-warning-border: #7a7a4a;
+    --test-section-border: #4a90e2;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemSystem, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.6;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.top-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: var(--topbar-bg);
+    color: var(--text-secondary);
+    padding: 1rem;
+    z-index: 1000;
+    box-shadow: 0 2px 4px var(--shadow-color);
+    transition: background-color 0.3s ease;
+}
+
+.top-bar h1 {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+}
+
+.controls {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+button {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.btn-primary {
+    background: var(--btn-primary);
+    color: var(--text-secondary);
+}
+
+.btn-primary:hover {
+    background: var(--btn-primary-hover);
+}
+
+.btn-secondary {
+    background: var(--btn-secondary);
+    color: var(--text-secondary);
+}
+
+.btn-secondary:hover {
+    background: var(--btn-secondary-hover);
+}
+
+.btn-success {
+    background: var(--btn-success);
+    color: var(--text-secondary);
+}
+
+.btn-success:hover {
+    background: var(--btn-success-hover);
+}
+
+.theme-toggle {
+    background: transparent;
+    border: 1px solid var(--text-secondary);
+    color: var(--text-secondary);
+    padding: 0.5rem;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+}
+
+.theme-toggle:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.main-container {
+    display: flex;
+    margin-top: 100px;
+    height: calc(100vh - 100px);
+}
+
+.test-area {
+    flex: 1;
+    padding: 1rem;
+    overflow-y: auto;
+    background: var(--bg-secondary);
+    border-right: 1px solid var(--border-color);
+    transition: background-color 0.3s ease;
+}
+
+.log-area {
+    flex: 1;
+    padding: 1rem;
+    overflow-y: auto;
+    background: var(--bg-tertiary);
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 0.85rem;
+    transition: background-color 0.3s ease;
+}
+
+.log-entry {
+    margin-bottom: 0.5rem;
+    padding: 0.25rem;
+    border-radius: 3px;
+}
+
+.log-info {
+    background: var(--log-info-bg);
+    color: var(--log-info-text);
+    border: 1px solid var(--log-info-border);
+}
+
+.log-success {
+    background: var(--log-success-bg);
+    color: var(--log-success-text);
+    border: 1px solid var(--log-success-border);
+}
+
+.log-error {
+    background: var(--log-error-bg);
+    color: var(--log-error-text);
+    border: 1px solid var(--log-error-border);
+}
+
+.log-warning {
+    background: var(--log-warning-bg);
+    color: var(--log-warning-text);
+    border: 1px solid var(--log-warning-border);
+}
+
+.test-section {
+    margin-bottom: 2rem;
+    padding: 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--bg-quaternary);
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.test-section h3 {
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+    border-bottom: 2px solid var(--test-section-border);
+    padding-bottom: 0.5rem;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: var(--progress-bg);
+    border-radius: 4px;
+    margin: 1rem 0;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: var(--progress-fill);
+    width: 0%;
+    transition: width 0.3s ease;
+}
+
+.status-indicator {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 0.5rem;
+}
+
+.status-pending { background: #95a5a6; }
+.status-running { background: #f39c12; }
+.status-passed { background: #27ae60; }
+.status-failed { background: #e74c3c; }
+
+/* Test item styles */
+.test-item {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background: var(--bg-primary);
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.test-item h4 {
+    margin-bottom: 0.75rem;
+    color: var(--text-primary);
+    font-size: 1rem;
+}
+
+.test-item h5 {
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+}
+
+.test-item h6 {
+    margin-bottom: 0.25rem;
+    color: var(--text-primary);
+    font-size: 0.85rem;
+}
+
+.test-result {
+    margin-top: 0.75rem;
+    padding: 0.5rem;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+.test-result.success {
+    background: var(--log-success-bg);
+    color: var(--log-success-text);
+    border: 1px solid var(--log-success-border);
+}
+
+.test-result.error {
+    background: var(--log-error-bg);
+    color: var(--log-error-text);
+    border: 1px solid var(--log-error-border);
+}
+
+.test-result.warning {
+    background: var(--log-warning-bg);
+    color: var(--log-warning-text);
+    border: 1px solid var(--log-warning-border);
+}
+
+/* JSON display styles */
+.json-display pre {
+    background: var(--bg-tertiary);
+    padding: 1rem;
+    border-radius: 4px;
+    overflow-x: auto;
+    font-size: 0.8rem;
+    border: 1px solid var(--border-color);
+    margin: 0.5rem 0;
+}
+
+.json-summary {
+    margin-top: 0.75rem;
+    padding: 0.5rem;
+    background: var(--bg-secondary);
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+}
+
+.json-summary p {
+    margin: 0.25rem 0;
+    font-size: 0.9rem;
+}
+
+/* User list styles */
+.user-list {
+    margin-top: 1rem;
+}
+
+.user-card {
+    padding: 0.75rem;
+    margin: 0.5rem 0;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background: var(--bg-secondary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.user-card:hover {
+    background: var(--bg-tertiary);
+    border-color: var(--btn-primary);
+}
+
+.user-card.selected {
+    background: var(--btn-primary);
+    color: var(--text-secondary);
+    border-color: var(--btn-primary-hover);
+}
+
+.user-card p {
+    margin: 0.25rem 0;
+    font-size: 0.85rem;
+}
+
+/* CSS variable demo styles */
+.css-var-demo {
+    border: 2px solid var(--primary-color, #333);
+    background: var(--bg-color, transparent);
+    transition: all 0.3s ease;
+}
+
+/* File result styles */
+.file-result {
+    margin-top: 0.75rem;
+    padding: 0.5rem;
+    background: var(--bg-secondary);
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+}
+
+/* Filter results styles */
+.filter-results {
+    margin-top: 0.75rem;
+    padding: 0.5rem;
+    background: var(--bg-secondary);
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+}
+
+.filter-results ul {
+    margin: 0.5rem 0;
+    padding-left: 1.5rem;
+}
+
+.filter-results li {
+    margin: 0.25rem 0;
+}
+
+/* Cookie status styles */
+.cookie-status {
+    margin-top: 0.75rem;
+    padding: 0.5rem;
+    background: var(--bg-secondary);
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+}
+
+/* Environment info styles */
+.env-info {
+    background: var(--bg-secondary);
+    padding: 1rem;
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+    margin: 0.5rem 0;
+}
+
+.env-info p {
+    margin: 0.25rem 0;
+    font-size: 0.9rem;
+}
+
+/* Environment result styles */
+.env-result {
+    margin: 0.5rem 0;
+    padding: 0.5rem;
+    background: var(--bg-tertiary);
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+}
+
+/* Highlight class for DOM tests */
+.highlight {
+    background-color: #ffff99 !important;
+    border: 2px solid #ffaa00 !important;
+    box-shadow: 0 0 10px rgba(255, 170, 0, 0.5);
+}
+
+/* Color sample for CSS tests */
+.color-sample {
+    border: 1px solid #333;
+    margin: 5px;
+}
+
+/* Code styling */
+code {
+    background: var(--bg-tertiary);
+    padding: 0.2rem 0.4rem;
+    border-radius: 3px;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 0.85rem;
+    border: 1px solid var(--border-color);
+}
+
+/* Preformatted text styling */
+pre {
+    background: var(--bg-tertiary);
+    padding: 1rem;
+    border-radius: 4px;
+    overflow-x: auto;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 0.8rem;
+    border: 1px solid var(--border-color);
+    margin: 0.5rem 0;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}

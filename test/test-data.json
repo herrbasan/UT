@@ -1,0 +1,36 @@
+{
+  "testData": {
+    "users": [
+      {
+        "id": 1,
+        "name": "John Doe",
+        "email": "john@example.com",
+        "role": "admin"
+      },
+      {
+        "id": 2,
+        "name": "Jane Smith",
+        "email": "jane@example.com",
+        "role": "user"
+      },
+      {
+        "id": 3,
+        "name": "Bob Johnson",
+        "email": "bob@example.com",
+        "role": "moderator"
+      }
+    ],
+    "settings": {
+      "theme": "dark",
+      "notifications": true,
+      "language": "en"
+    },
+    "metadata": {
+      "version": "1.0",
+      "lastUpdated": "2025-10-31",
+      "totalUsers": 3
+    }
+  },
+  "status": "success",
+  "message": "Test data loaded successfully"
+}
