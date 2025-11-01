@@ -1,0 +1,46 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*' # Triggers on tags like v1.0.0, v1.2.3, etc.
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Install dependencies
+        run: npm install
+      
+      - name: Build minified version
+        run: npm run build
+      
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            nui_ut.min.js
+          body: |
+            ## nui_ut Release ${{ github.ref_name }}
+            
+            Minified version: `nui_ut.min.js` (~24 KB)
+            
+            ### Usage
+            ```html
+            <script src="nui_ut.min.js"></script>
+            <script>
+              ut.el('#myButton');
+              ut.formatDate(new Date());
+            </script>
+            ```
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

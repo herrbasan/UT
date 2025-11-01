@@ -24,9 +24,9 @@ This is **not** a "drop-in library" you install via npm. It's a **personal toolk
 
 ## Quick Usage
 
-### Option 1: Minified Bundle (Recommended)
+### Option 1: Download from Releases (Recommended)
 
-For most projects, use the pre-built minified version (23.58 KB):
+Download the minified version from [GitHub Releases](https://github.com/herrbasan/UT/releases):
 
 ```html
 <!-- Load in HTML -->
@@ -42,9 +42,30 @@ For most projects, use the pre-built minified version (23.58 KB):
 </script>
 ```
 
-Build the minified version with: `npm run build`
+### Option 2: CDN (No Download)
 
-### Option 2: Development Bundle (Readable)
+Use jsdelivr CDN for quick testing:
+
+```html
+<!-- Latest version -->
+<script src="https://cdn.jsdelivr.net/gh/herrbasan/UT@latest/nui_ut.min.js"></script>
+
+<!-- Specific version (recommended for production) -->
+<script src="https://cdn.jsdelivr.net/gh/herrbasan/UT@v3.0.0/nui_ut.min.js"></script>
+```
+
+### Option 3: Build from Source
+
+Clone the repository and build locally:
+
+```bash
+git clone https://github.com/herrbasan/UT.git
+cd UT
+npm install
+npm run build  # Creates nui_ut.min.js
+```
+
+### Option 4: Development Bundle (Readable)
 
 Use the readable source during development:
 
