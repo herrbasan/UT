@@ -2,7 +2,19 @@
 
 Functions for working with filenames, extensions, URLs, and file type detection.
 
-## 📁 Filename Operations
+## � Table of Contents
+
+- [Filename Operations](#-filename-operations)
+  - [getExtension()](#getextension) - Extract file extension
+  - [removeExtension()](#removeextension) - Strip extension from filename
+  - [urlGetLast()](#urlgetlast) - Get last segment of path/URL
+- [File Type Detection](#-file-type-detection)
+  - [isFileType()](#isfiletype) - Check if file matches types
+  - [getMediaType()](#getmediatype) - Detect media category
+
+---
+
+## �📁 Filename Operations
 
 ### getExtension()
 

@@ -2,6 +2,44 @@
 
 Functions for working with HTML elements, CSS, events, and browser APIs - the foundation of interactive web applications.
 
+## 📑 Table of Contents
+
+- [Element Selection](#-element-selection)
+  - [el()](#el) - Better querySelector with element support
+  - [els()](#els) - Select multiple elements as array
+- [CSS & Classes](#-css--classes)
+  - [css()](#css) - Set multiple CSS properties
+  - [addClass() / addClasses()](#addclass--addclasses) - Add CSS classes
+  - [removeClass()](#removeclass) - Remove CSS classes
+  - [toggleClass()](#toggleclass) - Toggle CSS class
+  - [hasClass()](#hasclass) - Check if element has class
+  - [show() / hide()](#show--hide) - Toggle element visibility
+- [Element Creation & Manipulation](#️-element-creation--manipulation)
+  - [createElement()](#createelement) - Create elements with options
+  - [killKids() / killMe()](#killkids--killme) - Remove elements/children
+  - [htmlObject()](#htmlobject) - Parse HTML strings
+- [Events](#-events)
+  - [addEvents()](#addevents) - Attach multiple event listeners
+  - [clearEvents()](#clearevents) - Remove all tracked events
+- [Positioning & Geometry](#-positioning--geometry)
+  - [offset()](#offset) - Get element position
+  - [calcScale()](#calcscale) - Calculate scaling for images/videos
+  - [hitRect() / hitObject()](#hitrect--hitobject) - Hit detection
+- [Images & Media](#️-images--media)
+  - [getImage()](#getimage) - Preload images with callbacks
+  - [inlineSVG()](#inlinesvg) - Create inline SVG elements
+- [Browser APIs](#-browser-apis)
+  - [locationHash() / locationSearch()](#locationhash--locationsearch) - Parse URL parameters
+  - [visibility()](#visibility) - Detect tab visibility changes
+  - [enterFullscreen() / exitFullscreen()](#enterfullscreen--exitfullscreen) - Fullscreen control
+  - [isVisibleObserver()](#isvisibleobserver) - Intersection Observer wrapper
+- [Utility Functions](#-utility-functions)
+  - [attributes()](#attributes) - Set multiple attributes
+  - [isNode() / isElement()](#isnode--iselement) - Type checking
+  - [getComputedTranslateXY()](#getcomputedtranslatexy) - Get transform values
+
+---
+
 ## 🎯 Element Selection
 
 ### el()
@@ -720,6 +758,48 @@ visibility((isHidden) => {
 ```
 
 ---
+
+## 📚 Summary
+
+The DOM module provides comprehensive tools for everyday web development:
+
+**Element Selection & Manipulation:**
+- `el()`, `els()` - jQuery-style selectors that accept elements or strings
+- `css()` - Set multiple CSS properties at once
+- `addClass()`, `addClasses()`, `removeClass()`, `toggleClass()`, `hasClass()` - CSS class management
+- `show()`, `hide()` - Simple visibility toggles
+- `attributes()` - Bulk attribute setting
+
+**Element Creation & Removal:**
+- `createElement()` - Build elements with classes, events, attributes in one call
+- `htmlObject()` - Parse HTML strings into DOM elements
+- `killKids()` - Remove all child elements
+- `killMe()` - Remove element from DOM
+
+**Event Management:**
+- `addEvents()` - Attach multiple event listeners with tracking
+- `clearEvents()` - Remove all tracked event listeners
+
+**Geometry & Collision:**
+- `offset()` - Get element position relative to document
+- `calcScale()` - Calculate scaling for different fit modes (fit, cover, fill)
+- `hitRect()`, `hitObject()` - Collision detection for coordinates
+
+**Images & Media:**
+- `getImage()` - Load images with Promise or callback support
+- `inlineSVG()` - Create inline SVG elements
+
+**Browser APIs:**
+- `locationHash()`, `locationSearch()` - Parse URL parameters
+- `visibility()` - Detect page visibility changes
+- `enterFullscreen()`, `exitFullscreen()` - Fullscreen API wrappers
+- `isVisibleObserver()` - Intersection Observer for lazy loading & scroll animations
+
+**Utilities:**
+- `isNode()`, `isElement()` - Type checking for DOM objects
+- `getComputedTranslateXY()` - Extract CSS transform values
+
+These functions cover 90% of common DOM manipulation needs, providing a lightweight, modern alternative to jQuery.
 
 ### attributes()
 

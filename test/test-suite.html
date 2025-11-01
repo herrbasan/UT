@@ -6,6 +6,18 @@
     <title>nui_ut Test Suite</title>
 </head>
 <body>
+    <!-- Load minified version first (synchronously) -->
+    <script src="../nui_ut.min.js"></script>
+    <!-- Verify ut is loaded -->
+    <script>
+        if (typeof ut === 'undefined') {
+            document.body.innerHTML = '<h1 style="color: red;">Error: ut is not defined!</h1><p>The minified script failed to load or define the ut object.</p>';
+            console.error('ut is not defined after loading nui_ut.min.js');
+        } else {
+            console.log('✓ ut loaded successfully, version:', ut.version);
+        }
+    </script>
+    <!-- Load test suite (will use global ut from minified version) -->
     <script type="module" src="./test-suite.js"></script>
 </body>
 </html>

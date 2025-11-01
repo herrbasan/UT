@@ -2,6 +2,16 @@
 
 Functions for making HTTP requests with modern features like progress tracking, timeouts, and automatic error handling.
 
+## 📑 Table of Contents
+
+- [Main Fetch Function](#-main-fetch-function)
+  - [fetch()](#fetch) - HTTP requests with progress & timeouts
+  - [readJson()](#readjson) - Simplified JSON fetching
+- [Progress Tracking](#-progress-tracking)
+  - [trackProgress()](#trackprogress) - Monitor download progress
+
+---
+
 ## 🌐 Main Fetch Function
 
 ### fetch()

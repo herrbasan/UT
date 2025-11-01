@@ -2,7 +2,27 @@
 
 Functions for formatting strings, numbers, dates, and other data types - essential for clean output and user interfaces.
 
-## 🔢 Number Formatting
+## � Table of Contents
+
+- [Number Formatting](#-number-formatting)
+  - [lz() / lzold()](#lz--lzold) - Pad numbers with leading zeros
+  - [randomInt()](#randomint) - Generate random integers
+- [String Formatting](#-string-formatting)
+  - [capitalize()](#capitalize) - Capitalize first letter
+  - [slugify()](#slugify) - Convert text to URL-safe slugs
+- [ID Generation](#-id-generation)
+  - [id()](#id) - Generate unique IDs
+- [Date & Time Formatting](#-date--time-formatting)
+  - [formatDate()](#formatdate) - Format dates consistently
+  - [playTime()](#playtime) - Format time from frame counts
+- [File Size Formatting](#-file-size-formatting)
+  - [formatFileSize()](#formatfilesize) - Human-readable file sizes
+- [Data Parsing](#-data-parsing)
+  - [parseJSON()](#parsejson) - Safe JSON parsing
+
+---
+
+## �🔢 Number Formatting
 
 ### lz() / lzold()
 
@@ -302,175 +322,8 @@ formatFileSize(-1);            // ""
 
 ## 📄 Data Parsing
 
-### lzold()
+### parseJSON()
 
-**Problem**: Same as lz() but using the legacy implementation.
-
-**Solution**: Manual string padding with leading zeros.
-
-```javascript
-function lzold(num, size = 2) {
-    let s = num + "";
-    while (s.length < size) s = "0" + s;
-    return s;
-}
-```
-
-**📝 Parameters:**
-- `num`: Number to pad
-- `size`: Total length desired (default: 2)
-
-**🎉 Returns:** String with leading zeros
-
----
-
-### randomInt()
-
-**Problem**: Generate random integers for games, testing, or random selections.
-
-**Solution**: Simple random integer from 0 to max-1.
-
-```javascript
-function randomInt(max) {
-    return Math.floor(Math.random() * max);
-}
-```
-
-**📝 Parameters:**
-- `max`: Upper limit (exclusive)
-
-**🎉 Returns:** Random integer from 0 to max-1
-
-**💡 Usage Examples:**
-
-```javascript
-// Random array index
-const colors = ['red', 'blue', 'green'];
-const randomColor = colors[randomInt(colors.length)];
-
-// Dice roll (1-6)
-const diceRoll = randomInt(6) + 1;
-
-// Random percentage
-const randomPercent = randomInt(101); // 0-100
-```
-
----
-
-### id()
-
-**Problem**: Generate unique IDs for elements, data objects, or temporary identifiers.
-
-**Solution**: Create unique strings using timestamp, random numbers, and performance counter.
-
-```javascript
-function id() {
-    return '_' + (
-        Number(String(Math.random()).slice(2)) +
-        Date.now() +
-        Math.round(performance.now())
-    ).toString(36);
-}
-```
-
-**🎉 Returns:** Unique string ID starting with underscore
-
-**💡 Usage Examples:**
-
-```javascript
-const elementId = id(); // "_1a2b3c4d5e6f"
-const tempKey = id();   // "_7g8h9i0j1k2l"
-```
-
----
-
-### slugify()
-
-**Problem**: Convert human-readable text into URL-safe slugs.
-
-**Solution**: Remove special characters, replace spaces with underscores, normalize unicode.
-
-```javascript
-function slugify(str) {
-    // Converts "Hello World! 123" to "hello_world_123"
-}
-```
-
-**📝 Parameters:**
-- `str`: String to convert
-
-**🎉 Returns:** URL-safe slug string
-
-**💡 Usage Examples:**
-
-```javascript
-slugify("Hello World!");     // "hello_world"
-slugify("Café & Restaurant"); // "cafe_restaurant"
-slugify("File-Name_v1.0");   // "file_name_v1_0"
-```
-
----
-
-### playTime()
-
-**Problem**: Format time durations (like video lengths) into human-readable formats.
-
-**Solution**: Convert milliseconds into various time formats optimized for media playback.
-
-```javascript
-function playTime(n = 0, fps = 30) {
-    // Returns object with multiple time formats
-    // { hours, minutes, seconds, milliseconds, frames, short, full, etc. }
-}
-```
-
-**📝 Parameters:**
-- `n`: Time in milliseconds
-- `fps`: Frames per second for frame-based formats
-
-**🎉 Returns:** Object with multiple time format properties
-
-**💡 Usage Examples:**
-
-```javascript
-const time = playTime(65000); // 65 seconds
-// Result: {
-//   hours: "00",
-//   minutes: "01", 
-//   seconds: "05",
-//   short: "01:05",
-//   full: "00:01:05:000"
-// }
-```
-
----
-
-### formatFileSize()
-
-**Problem**: Display file sizes in human-readable formats.
-
-**Solution**: Convert bytes to appropriate units (KB, MB, GB, etc.).
-
-```javascript
-function formatFileSize(n) {
-    // Converts 1536 to "1.5 KB"
-}
-```
-
-**📝 Parameters:**
-- `n`: File size in bytes
-
-**🎉 Returns:** Formatted file size string
-
-**💡 Usage Examples:**
-
-```javascript
-formatFileSize(512);     // "512"
-formatFileSize(1536);    // "1.5 KB" 
-formatFileSize(1048576); // "1 MB"
-```
-
----
 **Problem**: JSON.parse() throws errors on invalid JSON. Need safe parsing that returns original string on failure.
 
 **Solution**: Try to parse JSON, return original string if parsing fails.
@@ -501,21 +354,34 @@ parseJSON('not valid json');          // "not valid json" (unchanged)
 parseJSON('');                        // "" (empty string)
 
 // Safe API response handling
-const response = fetch('/api/data').then(r => r.text());
-const data = parseJSON(await response); // Won't crash on invalid JSON
+const response = await fetch('/api/data').then(r => r.text());
+const data = parseJSON(response); // Won't crash on invalid JSON
+
+// Parse localStorage with fallback
+const settings = parseJSON(localStorage.getItem('settings') || '{}');
 ```
 
 ---
 
-## 📚 Key Concepts
+## 📚 Summary
 
-These functions teach important concepts:
+The format module provides essential formatting tools for:
 
-- **String Methods**: `charAt()`, `slice()`, `padStart()`, `toLowerCase()`
-- **Number Formatting**: `toString()`, `toFixed()`, `Math.floor()`
-- **Date/Time APIs**: `Date` object, `getFullYear()`, `getMonth()`, etc.
-- **Regular Expressions**: Pattern matching for slugify
-- **Error Handling**: Try/catch for safe parsing
-- **Unicode**: Accent normalization with `normalize()`
+**Numbers & Strings:**
+- `lz()`, `lzold()` - Leading zero padding for display consistency
+- `randomInt()` - Random number generation
+- `capitalize()` - String capitalization
+- `slugify()` - URL-safe slug generation
+- `id()` - Unique identifier generation
 
-Master these utilities and you'll handle 80% of common formatting tasks!
+**Date & Time:**
+- `formatDate()` - Comprehensive date formatting with multiple output formats
+- `playTime()` - Media duration formatting with frames support
+
+**File Sizes:**
+- `formatFileSize()` - Human-readable byte conversion (KB, MB, GB, TB)
+
+**Data Parsing:**
+- `parseJSON()` - Safe JSON parsing without throwing errors
+
+These utilities handle the most common formatting needs in web applications, from displaying timestamps to creating URL slugs to showing file sizes.

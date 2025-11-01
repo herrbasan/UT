@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>nui_ut Minified Version Test</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .success { color: green; }
+        .error { color: red; }
+        .info { color: blue; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f5f5f5;
+        }
+    </style>
+</head>
+<body>
+    <h1>nui_ut.min.js Verification</h1>
+    <p class="info">Testing that the minified version has all the same functions as the development version.</p>
+    
+    <div id="results"></div>
+
+    <!-- Load minified version -->
+    <script src="../nui_ut.min.js"></script>
+    
+    <!-- Load development version for comparison -->
+    <script type="module">
+        import utDev from '../nui_ut.js';
+        
+        const utMin = window.ut;
+        
+        // Get all functions from both versions
+        const minFunctions = Object.keys(utMin).filter(key => typeof utMin[key] === 'function').sort();
+        const devFunctions = Object.keys(utDev).filter(key => typeof utDev[key] === 'function').sort();
+        
+        // Compare
+        const missingInMin = devFunctions.filter(fn => !minFunctions.includes(fn));
+        const extraInMin = minFunctions.filter(fn => !devFunctions.includes(fn));
+        const common = minFunctions.filter(fn => devFunctions.includes(fn));
+        
+        let html = '<h2>Comparison Results</h2>';
+        
+        // Summary
+        html += '<table>';
+        html += '<tr><th>Metric</th><th>Development</th><th>Minified</th><th>Status</th></tr>';
+        html += `<tr><td>Total Functions</td><td>${devFunctions.length}</td><td>${minFunctions.length}</td><td class="${devFunctions.length === minFunctions.length ? 'success' : 'error'}">${devFunctions.length === minFunctions.length ? '✅ Match' : '❌ Mismatch'}</td></tr>`;
+        html += `<tr><td>Version</td><td>${utDev.version.join('.')}</td><td>${utMin.version.join('.')}</td><td class="${JSON.stringify(utDev.version) === JSON.stringify(utMin.version) ? 'success' : 'error'}">${JSON.stringify(utDev.version) === JSON.stringify(utMin.version) ? '✅ Match' : '❌ Mismatch'}</td></tr>`;
+        html += '</table>';
+        
+        if (missingInMin.length > 0) {
+            html += `<h3 class="error">❌ Missing in Minified (${missingInMin.length})</h3>`;
+            html += '<ul>';
+            missingInMin.forEach(fn => html += `<li>${fn}</li>`);
+            html += '</ul>';
+        }
+        
+        if (extraInMin.length > 0) {
+            html += `<h3 class="error">❌ Extra in Minified (${extraInMin.length})</h3>`;
+            html += '<ul>';
+            extraInMin.forEach(fn => html += `<li>${fn}</li>`);
+            html += '</ul>';
+        }
+        
+        if (missingInMin.length === 0 && extraInMin.length === 0) {
+            html += '<h3 class="success">✅ Perfect Match! All functions present in both versions.</h3>';
+            
+            // Test a few functions to make sure they work
+            html += '<h3>Function Tests</h3>';
+            html += '<table>';
+            html += '<tr><th>Function</th><th>Test</th><th>Result</th></tr>';
+            
+            const tests = [
+                { name: 'ut.lz(5, 3)', test: () => utMin.lz(5, 3) === '005', expected: '005' },
+                { name: 'ut.el("body")', test: () => utMin.el("body") === document.body, expected: 'document.body' },
+                { name: 'ut.deep_get({a:{b:1}}, "a.b")', test: () => utMin.deep_get({a:{b:1}}, "a.b") === 1, expected: '1' },
+                { name: 'ut.capitalize("hello")', test: () => utMin.capitalize("hello") === "Hello", expected: 'Hello' },
+                { name: 'ut.slugify("Hello World")', test: () => utMin.slugify("Hello World") === "hello_world", expected: 'hello_world' }
+            ];
+            
+            tests.forEach(test => {
+                try {
+                    const passed = test.test();
+                    html += `<tr><td>${test.name}</td><td>${test.expected}</td><td class="${passed ? 'success' : 'error'}">${passed ? '✅ PASS' : '❌ FAIL'}</td></tr>`;
+                } catch (error) {
+                    html += `<tr><td>${test.name}</td><td>${test.expected}</td><td class="error">❌ ERROR: ${error.message}</td></tr>`;
+                }
+            });
+            
+            html += '</table>';
+        }
+        
+        // Show all functions
+        html += `<h3>All Functions (${common.length})</h3>`;
+        html += '<div style="columns: 3; column-gap: 20px;">';
+        common.forEach(fn => {
+            html += `<div style="break-inside: avoid;">• ${fn}</div>`;
+        });
+        html += '</div>';
+        
+        document.getElementById('results').innerHTML = html;
+        
+        console.log('Development version functions:', devFunctions.length);
+        console.log('Minified version functions:', minFunctions.length);
+        console.log('All functions present:', missingInMin.length === 0 && extraInMin.length === 0);
+    </script>
+</body>
+</html>

@@ -2,6 +2,23 @@
 
 Functions for working with CSS custom properties (variables), colors, themes, and dynamic stylesheet manipulation.
 
+## 📑 Table of Contents
+
+- [Color Parsing](#-color-parsing)
+  - [parseCSSColor()](#parsecsscolor) - Parse CSS color strings to RGB/RGBA arrays
+  - [cssColorString()](#csscolorstring) - Convert arrays to CSS color strings
+- [CSS Custom Properties (Variables)](#-css-custom-properties-variables)
+  - [getCssVar()](#getcssvar) - Get CSS variable value
+  - [setCssVar()](#setcssvar) - Set CSS variable value
+  - [getCssVars()](#getcssvars) - Get all CSS variables as object
+  - [getCssVarNames()](#getcssvarnames) - Get all CSS variable names
+- [Theme Management](#-theme-management)
+  - [setTheme()](#settheme) - Auto dark/light theme switching
+- [Dynamic CSS Loading](#-dynamic-css-loading)
+  - [checkNuiCss()](#checknuicss) - Load CSS if variable doesn't exist
+
+---
+
 **📝 Note**: This module does not include public CSS loading utilities. For loading external stylesheets, use standard DOM methods:
 ```javascript
 const link = document.createElement('link');

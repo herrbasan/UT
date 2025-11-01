@@ -1,10 +1,5 @@
-import ut from '../nui_ut.js';
-
-// Initialize the ut object with all modules
-ut.init('all');
-
-// Make ut available globally for testing
-window.ut = ut;
+// ut is loaded globally from nui_ut.min.js
+// No need to import since it's already available as window.ut
 
 class TestSuite {
     constructor() {

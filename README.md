@@ -1,35 +1,88 @@
 # nui_ut - Personal Web Dev Utilities
 
-A collection of vanilla JavaScript utilities that have crystallized over 25+ years of web development. This isn't a framework or a comprehensive library - it's a curated set of functions that solve real problems I've encountered repeatedly in my work.
+A collection of vanilla JavaScript utilities crystallized from 25+ years of web development. Not a framework or comprehensive library - just focused functions that solve real problems encountered repeatedly in production work.
 
 ## Philosophy
 
 **Performance First, Frameworks Last**
-- Built for speed and efficiency
-- Avoids heavy UI frameworks and abstractions
-- Focuses on vanilla JavaScript solutions
-- Prioritizes developer experience and code clarity
+- Built for speed and efficiency with vanilla JavaScript
+- Zero dependencies - just browser-native APIs
+- Tree-shakable ES modules for selective loading
+- ~24 KB minified - smaller footprint than most frameworks
 
 **Grew Organically**
-- Started as scattered utility functions
+- Started as scattered utility functions across projects
 - Evolved through real-world usage and refinement
-- Represents patterns that actually work in production
-- Continuously updated based on changing web standards
+- Each function solves a specific, recurring problem
+- Continuously updated based on modern web standards
 
 ## What This Is
 
-This is **not** a "drop-in library" you install via npm. It's a **personal toolkit** that grew from my workflow and coding habits. The modular structure exists mainly for my own development convenience and bundler compatibility.
+This is **not** a "drop-in library" you install via npm. It's a **personal toolkit** that grew from my workflow and coding habits. The modular structure exists for development convenience and bundler compatibility.
 
-**Use it as snippets** - copy the functions you need into your projects. The organized structure is just to keep things manageable for me.
+**Best Use**: Copy individual functions into your projects as snippets. The organized structure just keeps things manageable.
 
 ## Quick Usage
 
-### As Snippets (Recommended)
+### Option 1: Minified Bundle (Recommended)
 
-Browse the `modules/` folder and copy-paste what you need:
+For most projects, use the pre-built minified version (23.58 KB):
+
+```html
+<!-- Load in HTML -->
+<script src="./nui_ut.min.js"></script>
+<script>
+  // All functions available globally via ut
+  ut.lz(5, 3);                              // '005'
+  ut.el('#myDiv');                          // DOM selection
+  ut.fetch('/api/data');                    // HTTP requests
+  ut.createElement('div', { inner: 'Hi' }); // Element creation
+  ut.formatDate(Date.now());                // Date formatting
+  ut.setCookie('theme', 'dark');            // Cookie management
+</script>
+```
+
+Build the minified version with: `npm run build`
+
+### Option 2: Development Bundle (Readable)
+
+Use the readable source during development:
 
 ```javascript
-// From string.js - Simple leading zero padding
+import ut from './nui_ut.js';
+
+// Same API, full source for debugging
+ut.lz(5, 3);                              // '005'
+ut.el('#myDiv');                          // DOM selection
+ut.fetch('/api/data');                    // HTTP requests
+```
+
+### Option 3: Selective Loading (Tree-Shaking)
+
+Import only the modules you need for smaller bundle sizes:
+
+```javascript
+// Import specific modules
+import domModule from './modules/dom.js';
+import formatModule from './modules/format.js';
+import dataModule from './modules/data.js';
+
+// Build your custom ut object
+const ut = { ...domModule, ...formatModule, ...dataModule };
+
+// Use same namespace, smaller footprint
+ut.el('#myDiv');           // ✅ Works (from dom)
+ut.formatDate(Date.now()); // ✅ Works (from format)
+ut.deep_get(obj, 'path');  // ✅ Works (from data)
+ut.setCookie('x', 'y');    // ❌ Not loaded (cookie not imported)
+```
+
+### Option 4: Copy Individual Functions
+
+Best for learning or single-function needs:
+
+```javascript
+// From format.js - Leading zero padding
 function lz(num, size = 2) {
     return String(num).padStart(size, '0');
 }
@@ -40,73 +93,136 @@ function el(selector, context = document) {
     return context.querySelector(selector);
 }
 
-// From fetch.js - Simple HTTP requests
-function fetch(url, data = {}, options = {}) {
-    // ... (see modules/fetch.js for full implementation)
+// From data.js - Safe nested property access
+function deep_get(obj, path) {
+    try {
+        let split = path.split('.');
+        if (split.length == 1) return obj[path];
+        if (split.length == 2) return obj[split[0]][split[1]];
+        // ... optimized for up to 9 levels
+    } catch (e) {
+        return undefined;
+    }
 }
-```
-
-### As a Library (My Workflow)
-
-If you want the full collection:
-
-```javascript
-import ut from './nui_ut.js';
-
-// Everything available at top level
-ut.lz(5, 3);        // '005'
-ut.el('#myDiv');    // DOM selection
-ut.fetch('/api/data'); // HTTP requests
-ut.createElement('div', { inner: 'Hello' }); // Element creation
 ```
 
 ## Module Overview
 
 | Module | What's In It | Use Case |
-|--------|-------------|----------|
-| `data` | Array/object manipulation, deep operations | Data processing |
-| `fetch` | HTTP requests with progress tracking | API calls |
-| `format` | Date/time/file formatting, JSON parsing | Display formatting |
-| `dom` | Element selection, events, manipulation | DOM interactions |
-| `css` | CSS variables, colors, theme detection | Styling utilities |
-| `file` | File type detection, size formatting | File handling |
-| `filter` | Data filtering and matching | Search/filtering |
-| `cookie` | Cookie management | Client storage |
-| `async` | Promises, event waiting | Async utilities |
-| `env` | Browser detection, feature support | Environment checks |
+|--------|--------------|----------|
+| **data** | Array sorting, object manipulation, deep operations | Data processing & transformation |
+| **format** | Date/time formatting, numbers, strings, JSON | Display formatting & parsing |
+| **dom** | Element selection, classes, events, creation | DOM manipulation & interaction |
+| **fetch** | HTTP requests with progress tracking | API calls & data loading |
+| **file** | File type detection, extensions, media types | File handling & validation |
+| **filter** | Advanced filtering, pattern matching | Search & data filtering |
+| **cookie** | Cookie management (get, set, delete) | Client-side storage |
+| **css** | CSS variables, colors, theming | Dynamic styling |
+| **env** | Browser detection, feature support | Environment checks |
+| **helpers** | Async utilities, image placeholders | Supporting functions |
+
+**10 modules** organized by functionality
 
 ## Why These Functions Exist
 
-Each utility solves a specific problem I've encountered repeatedly:
+Each utility solves a specific, recurring problem:
 
-- **`lz()`** - Formatting numbers for displays (timestamps, IDs, etc.)
-- **`el()`** - Better `querySelector` with element passthrough
-- **`deep_get()`** - Safe access to nested object properties
-- **`formatDate()`** - Consistent date formatting across projects
-- **`fetch()`** - HTTP requests with sensible defaults and error handling
+- **`lz()`** - Pad numbers with leading zeros: `lz(5, 3)` → `'005'` (timestamps, IDs, counters)
+- **`el()`** - Better `querySelector` that accepts elements or selectors without errors
+- **`deep_get()`** - Access nested properties using dynamic path strings: `deep_get(config, pathFromUser)` where path is `'api.endpoints.users'`
+- **`formatDate()`** - Consistent date formatting without external libraries
+- **`fetch()`** - HTTP requests with progress tracking, timeouts, and sensible defaults
+- **`createElement()`** - Build DOM elements programmatically with classes, events, and attributes in one call
+- **`setCssVar()`** - Dynamic theming with CSS variables: `setCssVar('--primary-color', '#3366cc')`
+- **`turboFilter()`** - Fast data filtering with complex conditions
+- **`slugify()`** - Convert text to URL-safe slugs: `slugify('Hello World!')` → `'hello_world'`
+
+## Building for Production
+
+Generate the minified version for production use:
+
+```bash
+npm install        # Install Terser (dev dependency)
+npm run build      # Creates nui_ut.min.js (23.58 KB)
+```
+
+**Build Results:**
+- Source: ~52 KB (unminified bundle)
+- Minified: ~24 KB (56% size reduction)
+- All modules included
+- IIFE format (works without module support)
+- Global `ut` object created automatically
+
+The minified version:
+- ✅ All modules bundled in one file
+- ✅ Compressed and optimized
+- ✅ Same API as development version
+- ✅ Works in any browser environment
+- ✅ No import statements needed
+
+## Testing
+
+Comprehensive test suite with interactive UI:
+
+```bash
+# Open in browser:
+test/test-suite.html
+```
+
+The test suite:
+- ✅ Tests all modules and functions
+- ✅ Uses the minified production version
+- ✅ Interactive UI for exploring each module
+- ✅ Real-world usage examples
+- ✅ Cookie persistence for theme preferences
+- ✅ Demonstrates practical integration patterns
 
 ## Performance Focus
 
-- Minimal dependencies (just vanilla JS)
-- Tree-shakable ES modules
-- Efficient algorithms
-- Browser-native APIs where possible
-- Small footprint
+- **Zero Dependencies** - Just vanilla JavaScript
+- **Tree-Shakable** - ES modules support selective loading
+- **Optimized Algorithms** - Performance-first implementations
+- **Native APIs** - Uses browser-native functions where possible
+- **Small Footprint** - 23.58 KB minified (~56% compression ratio)
 
 ## Browser Support
 
-Modern browsers with ES module support. Tested in:
-- Chrome 80+
-- Firefox 78+
-- Safari 14+
-- Edge 80+
+Modern browsers with ES6 support:
+- Chrome 80+ ✅
+- Firefox 78+ ✅
+- Safari 14+ ✅
+- Edge 80+ ✅
+
+**Note:** The minified version (IIFE format) works without ES module support, but individual modules require ES6 import/export.
+
+## Documentation
+
+Comprehensive documentation for all modules:
+
+📚 **[Full Documentation](docs/README.md)** - Complete reference with examples
+
+**Module-Specific Guides:**
+- [data.md](docs/data.md) - Array/object manipulation
+- [format.md](docs/format.md) - Formatting utilities
+- [dom.md](docs/dom.md) - DOM manipulation
+- [fetch.md](docs/fetch.md) - HTTP requests
+- [file.md](docs/file.md) - File utilities
+- [filter.md](docs/filter.md) - Data filtering
+- [cookie.md](docs/cookie.md) - Cookie management
+- [css.md](docs/css.md) - CSS utilities
+- [env.md](docs/env.md) - Environment detection
 
 ## Contributing
 
-This is a personal collection, but feel free to:
-- Use any function in your projects
-- Suggest improvements
-- Report bugs
+This is a personal collection, but you're welcome to:
+- ✅ Use any function in your projects (copy freely)
+- ✅ Suggest improvements via issues
+- ✅ Report bugs or inconsistencies
+- ✅ Share how you're using it
+
+## License
+
+Use freely in your projects. Attribution appreciated but not required.
 
 ## Documentation
 

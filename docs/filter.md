@@ -2,7 +2,19 @@
 
 Functions for filtering arrays of objects with complex conditions, search terms, and high-performance operations.
 
-## 🔍 Condition Matching
+## � Table of Contents
+
+- [Condition Matching](#-condition-matching)
+  - [match()](#match) - Test if item matches condition
+- [High-Performance Filtering](#-high-performance-filtering)
+  - [turboFilter()](#turbofilter) - Fast multi-condition filtering
+- [Advanced Filtering Examples](#-advanced-filtering-examples) - Real-world use cases
+- [Legacy Support](#-legacy-support)
+  - [includesDeep()](#includesdeep) - Deprecated, use deep_includes()
+
+---
+
+## �🔍 Condition Matching
 
 ### match()
 

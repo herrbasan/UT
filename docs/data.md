@@ -2,6 +2,36 @@
 
 Functions for working with arrays and objects - the building blocks of JavaScript data processing.
 
+## 📑 Table of Contents
+
+- [Array Operations](#-array-operations)
+  - [sortByKey()](#sortbykey) - Sort arrays of objects by property path
+  - [arrayToObject()](#arraytoobject) - Convert arrays to keyed objects
+  - [shuffleArray()](#shufflearray) - Randomize array order
+- [Deep Property Access](#-deep-property-access)
+  - [deep_get()](#deep_get) - Access nested properties with dynamic paths
+  - [deep_set()](#deep_set) - Set nested properties with dynamic paths
+  - [deep_includes()](#deep_includes) - Search arrays with dynamic paths
+  - [keyByDeepValue()](#keybydeepvalue) - Find keys by nested values
+  - [Performance Architecture](#-understanding-the-performance-architecture) - How deep functions are optimized
+- [Object Operations](#-object-operations)
+  - [jclone()](#jclone) - Fast JSON-based deep clone
+  - [clone()](#clone) - Modern deep clone with fallback
+- [Search & Find Operations](#-search--find-operations)
+  - [itemByProp()](#itembyprop) - Find item by property value
+  - [indexByProp()](#indexbyprop) - Find index by property value
+  - [allIdxByProp()](#allidxbyprop) - Find all indices by property value
+- [Math Operations](#-math-operations)
+  - [average()](#average) - Calculate arithmetic mean
+  - [medianAverage()](#medianaverage) - Calculate median value
+- [Utility Functions](#-utility-functions)
+  - [randomNumbers()](#randomnumbers) - Generate random number array
+- [Key Operations](#-key-operations)
+  - [keyByValue()](#keybyvalue) - Find key by value
+  - [jcompare()](#jcompare) - Compare objects for inequality
+
+---
+
 ## 🎯 Array Operations
 
 ### sortByKey()
@@ -126,13 +156,15 @@ const shuffled = shuffleArray(original, true);
 
 ---
 
-## 🔍 Object Operations
+## 🔍 Deep Property Access
+
+All functions in this section solve the same core problem: **accessing or manipulating nested object properties using dynamic path strings** that are determined at runtime (from configuration, user input, or business logic).
 
 ### deep_get()
 
-**Problem**: JavaScript throws errors when accessing nested object properties that don't exist. How do you safely get `user.settings.theme.color` without crashing?
+**Problem**: You need to access nested object properties using a path that's determined at runtime (from config, user input, or business logic). You can't use hardcoded dot notation like `obj.user.settings.theme` because the path is stored as a string or built dynamically.
 
-**Solution**: High-performance deep property access designed for dynamic paths assembled at runtime.
+**Solution**: `deep_get()` takes a string path like `'user.settings.theme'` and safely traverses the object, returning `undefined` if any part doesn't exist.
 
 ```javascript
 function deep_get(obj, path) {
@@ -147,20 +179,33 @@ function deep_get(obj, path) {
 
 **🎉 Returns:** The property value, or `undefined` if path doesn't exist
 
-**💡 Usage Examples:**
+**💡 Without deep_get() - Can't use dynamic paths:**
 
 ```javascript
-const user = {
-    profile: {
-        settings: {
-            theme: 'dark'
-        }
-    }
+const config = {
+    api: { endpoints: { users: '/api/users' } },
+    ui: { theme: { primary: '#3366cc' } }
 };
 
-// Dynamic path access
-const theme = deep_get(user, 'profile.settings.theme'); // 'dark'
-const missing = deep_get(user, 'profile.missing.deep.value'); // undefined
+// Path comes from configuration or user selection
+const settingPath = 'ui.theme.primary'; // determined at runtime
+
+// ❌ Can't do this - it's a string, not actual property access
+const value = config[settingPath]; // undefined - doesn't work!
+
+// ❌ Can't do this either - you don't know the depth ahead of time
+const value = config.ui.theme.primary; // hardcoded, not dynamic
+```
+
+**✅ With deep_get() - Dynamic paths work perfectly:**
+
+```javascript
+// ✅ Path is built dynamically at runtime
+const settingPath = 'ui.theme.primary';
+const value = deep_get(config, settingPath); // '#3366cc'
+
+// ✅ Safely returns undefined for missing paths
+const missing = deep_get(config, 'ui.missing.deep.path'); // undefined (no error!)
 ```
 
 **🚀 Performance Design:**
@@ -193,9 +238,9 @@ const language = getUserPreference(user, 'locale', 'language');
 
 ### deep_set()
 
-**Problem**: Setting nested object properties requires checking if each level exists first.
+**Problem**: You need to set a nested property using a dynamic path string. With regular JavaScript, you'd have to manually check and create each level, which is tedious and error-prone.
 
-**Solution**: High-performance deep property setting that creates nested structure automatically, optimized for dynamic paths.
+**Solution**: `deep_set()` takes a string path and value, automatically creating any missing intermediate objects along the way.
 
 ```javascript
 function deep_set(obj, path, value) {
@@ -211,14 +256,45 @@ function deep_set(obj, path, value) {
 
 **🎉 Returns:** Nothing (modifies object in place)
 
-**💡 Usage Examples:**
+**💡 Without deep_set() - Manual path creation is tedious:**
+
+```javascript
+const config = {};
+const settingPath = 'database.connection.timeout'; // from configuration file
+const value = 5000;
+
+// ❌ Can't use dynamic path directly
+config[settingPath] = value; // Doesn't work - creates wrong structure!
+
+// ❌ Have to manually check and create each level
+const parts = settingPath.split('.');
+if (!config[parts[0]]) config[parts[0]] = {};
+if (!config[parts[0]][parts[1]]) config[parts[0]][parts[1]] = {};
+config[parts[0]][parts[1]][parts[2]] = value;
+// Verbose, error-prone, doesn't scale to unknown depths
+```
+
+**✅ With deep_set() - Clean dynamic path setting:**
 
 ```javascript
 const config = {};
 
-// Set nested property - creates missing objects automatically
-deep_set(config, 'user.settings.theme', 'dark');
-// config becomes: { user: { settings: { theme: 'dark' } } }
+// ✅ Set nested property from dynamic path - creates structure automatically
+deep_set(config, 'database.connection.timeout', 5000);
+// config becomes: { database: { connection: { timeout: 5000 } } }
+
+// ✅ Perfect for configuration builders
+const settings = [
+    { path: 'api.baseUrl', value: 'https://api.example.com' },
+    { path: 'api.timeout', value: 3000 },
+    { path: 'ui.theme.primary', value: '#3366cc' }
+];
+
+const config = {};
+settings.forEach(({ path, value }) => {
+    deep_set(config, path, value);
+});
+// All nested structures created automatically!
 
 deep_set(config, 'app.version', '1.0');
 // config becomes: { user: { settings: { theme: 'dark' } }, app: { version: '1.0' } }
@@ -247,6 +323,117 @@ setUserSetting(user, 'privacy', 'analytics', false);
 - **Automatic Structure**: Creates missing objects without manual checks
 - **Performance**: Minimal overhead, direct property access
 - **Safety**: Never throws errors, handles any nesting depth
+
+---
+
+### deep_includes()
+
+**Problem**: You need to check if any object in an array has a specific value at a nested property, but the property path is dynamic (from configuration or user input).
+
+**Solution**: `deep_includes()` searches an array using a dynamic path string, returning `true` if any object matches. This is `deep_get()` applied to array searching.
+
+```javascript
+function deep_includes(ar, path, compare) {
+    // Returns true if any object in array has obj[path] === compare
+}
+```
+
+**📝 Parameters:**
+- `ar`: Array to search
+- `path`: Deep property path (e.g., `'user.settings.theme'`)
+- `compare`: Value to match
+
+**🎉 Returns:** `true` if found, `false` otherwise
+
+**💡 Without deep_includes() - Can't use dynamic paths:**
+
+```javascript
+const users = [
+    { profile: { preferences: { theme: 'light' } } },
+    { profile: { preferences: { theme: 'dark' } } }
+];
+
+const searchPath = 'profile.preferences.theme'; // from filter config
+const searchValue = 'dark';
+
+// ❌ Can't use dynamic path with standard array methods
+const found = users.some(u => u[searchPath] === searchValue); // doesn't work!
+
+// ❌ Would need to hardcode the path
+const found = users.some(u => u.profile.preferences.theme === searchValue); // not dynamic!
+```
+
+**✅ With deep_includes() - Dynamic path search works:**
+
+```javascript
+// ✅ Search using dynamic path
+const searchPath = 'profile.preferences.theme';
+const hasDarkTheme = deep_includes(users, searchPath, 'dark'); // true
+
+// ✅ Perfect for dynamic filters
+function hasUserWithSetting(users, settingPath, value) {
+    return deep_includes(users, settingPath, value);
+}
+
+hasUserWithSetting(users, 'profile.preferences.theme', 'dark'); // true
+hasUserWithSetting(users, 'profile.preferences.language', 'es'); // false
+```
+
+---
+
+### keyByDeepValue()
+
+**Problem**: You need to find which key in an object contains a specific value at a nested property path, but the path is dynamic.
+
+**Solution**: `keyByDeepValue()` searches through an object's keys using a dynamic path string, returning the key where the nested value matches. This is `deep_get()` applied to reverse lookup.
+
+```javascript
+function keyByDeepValue(obj, path, val) {
+    // Returns the key where deep_get(obj[key], path) === val
+}
+```
+
+**📝 Parameters:**
+- `obj`: Object to search
+- `path`: Nested property path
+- `val`: Value to find
+
+**🎉 Returns:** The matching key, or undefined if not found
+
+**💡 Without keyByDeepValue() - Can't search with dynamic paths:**
+
+```javascript
+const servers = {
+    prod: { config: { region: 'us-east', status: 'active' } },
+    staging: { config: { region: 'us-west', status: 'active' } },
+    dev: { config: { region: 'eu-west', status: 'inactive' } }
+};
+
+const searchPath = 'config.region'; // from search filter
+const searchValue = 'us-west';
+
+// ❌ Can't use dynamic path with Object methods
+const key = Object.keys(servers).find(k => servers[k][searchPath] === searchValue); // doesn't work!
+
+// ❌ Would need to hardcode the path
+const key = Object.keys(servers).find(k => servers[k].config.region === searchValue); // not dynamic!
+```
+
+**✅ With keyByDeepValue() - Dynamic path search works:**
+
+```javascript
+// ✅ Find key using dynamic path
+const searchPath = 'config.region';
+const serverKey = keyByDeepValue(servers, searchPath, 'us-west'); // 'staging'
+
+// ✅ Perfect for dynamic lookups
+function findServerByProperty(servers, propertyPath, value) {
+    return keyByDeepValue(servers, propertyPath, value);
+}
+
+findServerByProperty(servers, 'config.region', 'eu-west'); // 'dev'
+findServerByProperty(servers, 'config.status', 'active'); // 'prod' (finds first match)
+```
 
 ---
 
@@ -308,6 +495,8 @@ processApiResponse(apiResult, 'meta.pagination.total');
 This design makes `deep_get()` and `deep_set()` the **fastest possible way** to work with dynamic property paths in JavaScript, while maintaining safety and ease of use.
 
 ---
+
+## 📦 Object Operations
 
 ### jclone()
 
@@ -408,44 +597,88 @@ const users = [
 const user = itemByProp(users, 'id', 2);
 // Returns: { id: 2, name: 'Jane' }
 
-const notFound = itemByProp(users, 'name', 'Bob');
+const missing = itemByProp(users, 'name', 'Bob');
 // Returns: undefined
 ```
 
 ---
 
-### deep_includes()
+### indexByProp()
 
-**Problem**: Check if any object in an array has a specific value at a nested property path.
+**Problem**: Find the index position of an object in an array by matching a property value.
 
-**Solution**: Search array for objects where a deep property matches a value.
+**Solution**: Get the array index of the first object that has a specific property value.
 
 ```javascript
-function deep_includes(ar, path, compare) {
-    // Returns true if any object in array has obj[path] === compare
+function indexByProp(ar, prop, value) {
+    // Returns the index of first object where obj[prop] === value
 }
 ```
 
 **📝 Parameters:**
-- `ar`: Array to search
-- `path`: Deep property path (e.g., `'user.settings.theme'`)
-- `compare`: Value to match
+- `ar`: Array of objects to search
+- `prop`: Property path to check (supports nested paths)
+- `value`: Value to match
 
-**🎉 Returns:** `true` if found, `false` otherwise
+**🎉 Returns:** Index of the matching object, or -1 if not found
 
 **💡 Usage Examples:**
 
 ```javascript
-const configs = [
-    { user: { settings: { theme: 'light' } } },
-    { user: { settings: { theme: 'dark' } } }
+const users = [
+    { id: 1, name: 'John' },
+    { id: 2, name: 'Jane' },
+    { id: 3, name: 'Bob' }
 ];
 
-const hasDarkTheme = deep_includes(configs, 'user.settings.theme', 'dark');
-// Returns: true
+const index = indexByProp(users, 'id', 2); // 1
+const notFound = indexByProp(users, 'id', 99); // -1
 
-const hasBlueTheme = deep_includes(configs, 'user.settings.theme', 'blue');
-// Returns: false
+// Use with splice to remove by ID
+const removeIndex = indexByProp(users, 'id', 2);
+if (removeIndex !== -1) {
+    users.splice(removeIndex, 1);
+}
+```
+
+---
+
+### allIdxByProp()
+
+**Problem**: Find all positions where objects in an array have a specific property value (when duplicates exist).
+
+**Solution**: Get an array of all indices where objects match a property value.
+
+```javascript
+function allIdxByProp(ar, prop, value) {
+    // Returns array of all indices where obj[prop] === value
+}
+```
+
+**📝 Parameters:**
+- `ar`: Array of objects to search
+- `prop`: Property path to check
+- `value`: Value to match
+
+**🎉 Returns:** Array of indices (empty array if none found)
+
+**💡 Usage Examples:**
+
+```javascript
+const tasks = [
+    { id: 1, status: 'complete' },
+    { id: 2, status: 'pending' },
+    { id: 3, status: 'complete' },
+    { id: 4, status: 'complete' }
+];
+
+const completeIndices = allIdxByProp(tasks, 'status', 'complete');
+// Returns: [0, 2, 3]
+
+// Remove all matching items
+const indicesToRemove = allIdxByProp(tasks, 'status', 'complete');
+indicesToRemove.reverse().forEach(idx => tasks.splice(idx, 1));
+// Removes from end to start to maintain correct indices
 ```
 
 ---
@@ -579,194 +812,11 @@ const missing = keyByValue(statusCodes, 301); // undefined
 
 ---
 
-### includesDeep()
+### jcompare()
 
-**Problem**: You need to check if any item in an array contains a specific value at a nested path.
+**Problem**: Compare two objects for inequality (detect if objects are different).
 
-**Solution**: Search through an array for items that contain a specific value at a nested property path.
-
-```javascript
-function includesDeep(ar, path, compare) {
-    // Returns true if any item in the array has the specified value at the given path
-}
-```
-
-**📝 Parameters:**
-- `ar`: Array of objects to search through
-- `path`: Property path to check (supports nested paths)
-- `compare`: Value to search for
-
-**🎉 Returns:** Boolean indicating if any item contains the value
-
-**💡 Usage Examples:**
-
-```javascript
-const users = [
-    { profile: { id: 1, name: 'John' } },
-    { profile: { id: 2, name: 'Jane' } }
-];
-
-const hasUser1 = includesDeep(users, 'profile.id', 1); // true
-const hasUser3 = includesDeep(users, 'profile.id', 3); // false
-```
-
----
-
-### indexByProp()
-
-**Problem**: You need to find the index of an object in an array by matching a property value.
-
-**Solution**: Get the index of the first object that has a specific property value.
-
-```javascript
-function indexByProp(ar, prop, value) {
-    // Returns the index of the first object with matching property value
-}
-```
-
-**📝 Parameters:**
-- `ar`: Array of objects to search
-- `prop`: Property name to check
-- `value`: Value to match
-
-**🎉 Returns:** Index of the matching object, or -1 if not found
-
----
-
-### itemByProp()
-
-**Problem**: You need to find a specific object in an array by matching a property value.
-
-**Solution**: Get the first object that has a specific property value.
-
-```javascript
-function itemByProp(ar, prop, value) {
-    // Returns the first object with matching property value
-}
-```
-
-**📝 Parameters:**
-- `ar`: Array of objects to search
-- `prop`: Property name to check
-- `value`: Value to match
-
-**🎉 Returns:** The matching object, or undefined if not found
-
-**💡 Usage Examples:**
-
-```javascript
-const users = [
-    { id: 1, name: 'John' },
-    { id: 2, name: 'Jane' }
-];
-
-const user = itemByProp(users, 'id', 2);
-// Result: { id: 2, name: 'Jane' }
-```
-
----
-
-### allIdxByProp()
-
-**Problem**: You need to find all indices of objects in an array that match a property value.
-
-**Solution**: Get an array of all indices where objects have a specific property value.
-
-```javascript
-function allIdxByProp(ar, prop, value) {
-    // Returns array of all indices with matching property values
-}
-```
-
-**📝 Parameters:**
-- `ar`: Array of objects to search
-- `prop`: Property name to check
-- `value`: Value to match
-
-**🎉 Returns:** Array of indices
-
----
-
-### average()
-
-**Problem**: Calculate the average of an array of numbers.
-
-**Solution**: Simple arithmetic mean calculation.
-
-```javascript
-function average(ar) {
-    return ar.reduce((a, b) => a + b, 0) / ar.length;
-}
-```
-
-**📝 Parameters:**
-- `ar`: Array of numbers
-
-**🎉 Returns:** Average value
-
----
-
-### medianAverage()
-
-**Problem**: Calculate a median-like average that excludes outliers.
-
-**Solution**: Sort the array and average the middle values, excluding the highest and lowest.
-
-```javascript
-function medianAverage(ring) {
-    // Sorts array, removes highest/lowest values, averages the middle
-}
-```
-
-**📝 Parameters:**
-- `ring`: Array of numbers
-
-**🎉 Returns:** Median average (or 0 for arrays with 3 or fewer elements)
-
----
-
-### randomNumbers()
-
-**Problem**: Generate an array of consecutive numbers in random order.
-
-**Solution**: Create a shuffled array of numbers from 0 to max-1.
-
-```javascript
-function randomNumbers(max) {
-    // Returns shuffled array [0, 1, 2, ..., max-1]
-}
-```
-
-**📝 Parameters:**
-- `max`: Upper limit (exclusive)
-
-**🎉 Returns:** Shuffled array of numbers
-
----
-
-### keyByDeepValue()
-
-**Problem**: Find the key of an object where a nested property has a specific value.
-
-**Solution**: Search through object keys to find which one contains a nested value.
-
-```javascript
-function keyByDeepValue(obj, path, val) {
-    // Returns the key where deep_get(obj[key], path) === val
-}
-```
-
-**📝 Parameters:**
-- `obj`: Object to search
-- `path`: Nested property path
-- `val`: Value to find
-
-**🎉 Returns:** The matching key, or undefined if not found
-
----
-**Problem**: Compare two objects for inequality (not deep equality).
-
-**Solution**: JSON stringify comparison to check if objects are different.
+**Solution**: JSON stringify comparison to check if objects differ.
 
 ```javascript
 function jcompare(obj_1, obj_2) {
@@ -798,14 +848,19 @@ if (jcompare(oldState, newState)) {
 
 ---
 
-## 📚 Key Concepts
+## 📚 Summary
 
-These functions teach important JavaScript concepts:
+The data module provides comprehensive tools for:
 
-- **Array Methods**: `sort()`, `map()`, `reduce()`, `forEach()`
-- **Object Manipulation**: Property access, nested structures
-- **Error Handling**: Try/catch, safe property access
-- **Algorithms**: Fisher-Yates shuffle, deep traversal
-- **Modern APIs**: `structuredClone()`, JSON methods
+- **Array Operations**: Sorting, shuffling, searching, indexing
+- **Object Operations**: Deep access, cloning, key/value lookups
+- **Math Operations**: Averages, medians, random numbers
+- **Search & Filter**: Finding items by property values
 
-Each function solves a common problem you'll encounter in real applications!
+These functions form the foundation for data processing in JavaScript applications, handling common patterns like:
+- Safe nested property access without errors
+- Efficient object-to-array transformations
+- Robust statistical calculations
+- Fast lookups and searches
+
+Each function is optimized for real-world usage with minimal overhead.

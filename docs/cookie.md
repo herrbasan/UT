@@ -2,6 +2,17 @@
 
 Functions for managing browser cookies with expiration, path settings, and validation.
 
+## 📑 Table of Contents
+
+- [Cookie Operations](#-cookie-operations)
+  - [getCookie()](#getcookie) - Retrieve cookie value
+  - [setCookie()](#setcookie) - Set cookie with expiration
+  - [getCookies()](#getcookies) - Get all cookies as object
+  - [deleteCookie()](#deletecookie) - Remove a cookie
+  - [checkCookie()](#checkcookie) - Validate cookie value
+
+---
+
 ## 🍪 Cookie Operations
 
 ### getCookies()

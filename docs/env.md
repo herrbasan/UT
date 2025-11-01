@@ -2,6 +2,17 @@
 
 Functions for detecting browser capabilities, operating system, device features, and image format support.
 
+## 📑 Table of Contents
+
+- [Browser & OS Detection](#-browser--os-detection)
+  - [detectEnv()](#detectenv) - Detect browser, OS, device type
+- [Image Format Support](#️-image-format-support)
+  - [webpSupport()](#webpsupport) - Check WebP support
+  - [avifSupport()](#avifsupport) - Check AVIF support
+- [Feature Detection Examples](#-feature-detection-examples) - Real-world use cases
+
+---
+
 ## 🌐 Browser & OS Detection
 
 ### detectEnv()

@@ -1,0 +1,18 @@
+# Dependencies
+node_modules/
+
+# Build output
+nui_ut.min.js
+nui_ut.bundle.js
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor directories
+.vscode/
+.idea/
+
+# Logs
+*.log
+npm-debug.log*

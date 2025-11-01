@@ -68,4 +68,12 @@ function awaitEvent(el, event, time=100000){
     })
 }
 
+export default {
+    addHeadImport,
+    drawImageDummy,
+    awaitMs,
+    awaitEvent
+};
+
+// Also export individually for backward compatibility with css.js import
 export { addHeadImport, drawImageDummy, awaitMs, awaitEvent };
